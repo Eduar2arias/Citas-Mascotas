@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState  , useEffect} from 'react'
 
-function Formulario({paciente , setPaciente}) {
+function Formulario({pacientes , setPacientes , paciente , setPaciente}) {
   const [nombre , setNombre] = useState('')
   const [propietario , setPropietario] = useState('')
   const [email , setEmail] = useState('')
@@ -14,12 +14,31 @@ function Formulario({paciente , setPaciente}) {
     return random + fecha
   }
 
+  
+  
+  useEffect(() => {
+
+      console.log('8797');
+      if (Object.keys(paciente).length > 0) {
+        setNombre(paciente.nombre)
+        setEmail(paciente.email)
+        setPropietario(paciente.propietario)
+        setFecha(paciente.fecha)
+        setSintomas(paciente.sintomas)    
+      }
+  
+    
+  }, [paciente])
+  
+
   function handleSubmit (e){
     e.preventDefault()
     if( [nombre , propietario , email , fecha , sintomas].includes('')){
       console.log('existe un error');
       return setError(true)
     }
+
+    setError(false)
     let data = {
       nombre,
       propietario,
@@ -29,8 +48,21 @@ function Formulario({paciente , setPaciente}) {
       id : generarId()
 
     }
+    if( paciente.id){
+      console.log(paciente.id);
+      console.log(data.id);
+      data.id = paciente.id
+      console.log('entramos');
+      const ObjActualizado = pacientes.map( pacienteState => pacienteState.id === paciente.id ? data : pacienteState )
+      setPacientes(ObjActualizado)
+      setPaciente({})
 
-    setPaciente([...paciente,data])
+    }else{
+
+      setPacientes([...pacientes,data])
+     
+    }
+
     setNombre("")
     setEmail("")
     setPropietario("")
